@@ -41,10 +41,27 @@ def graph_data(stock):
     plt.show()
     
     
-def plot_ohlc(stock):
+def plot_ohlc(stock, mov_avg):
+    '''plot ohlc graph 
     
+    Args:
+        stock (string): stock name in string format, e.g, 'NVDA', 'GOOGL'
+        mov_avg (int): the range used to calculate moving average
+        start (string):
+        stop (string):
+        
+    Return:
+        matplotlib graph
+    
+    Notes:
+    
+    '''
     
     stock_data = pdr.get_data_google(stock)
+    
+    
+    stock_data[str(mov_avg)] = np.round(stock_data["Close"].rolling(window = mov_avg, center = False).mean(), 2)
+    
     
     # stock_data['Date'] = stock_data.index
     time_stamp = mdates.date2num(stock_data.index.to_pydatetime())
@@ -68,10 +85,17 @@ def plot_ohlc(stock):
     
     candlestick_ohlc(ax1, stock_data.values, width=0.4, colorup='#77d879', colordown='#db3f3f')
     
+    
+    if mov_avg != None:
+        ax1.plot(stock_data['Date'], stock_data[str(mov_avg)])
+    
+    
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(45)
         
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+    
+    
     
     plt.xlabel('Date')
     plt.ylabel('Price')
@@ -79,6 +103,5 @@ def plot_ohlc(stock):
     # plt.legend()
     
 
-        
     plt.show()
 
